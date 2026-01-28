@@ -11,6 +11,7 @@ export default function GenerationProgress(){
   const { formData: contextFormData } = useContext(InvitationContext)
   const [progress, setProgress] = useState(0)
   const [formData, setFormData] = useState(null)
+  const [uploading, setUploading] = useState(false)
 
   // Scroll to top on page load
   useEffect(() => {
@@ -30,94 +31,114 @@ export default function GenerationProgress(){
   }, [contextFormData])
 
   useEffect(() => {
-    // Simulate generation progress
+    // Simulate generation progress - slower to match actual Firebase operations
+    let currentProgress = 0
+    
     const interval = setInterval(() => {
       setProgress(prev => {
-        const newProgress = prev + Math.random() * 30
-        if(newProgress >= 100){
+        // Slower progress increase that syncs better with actual uploads
+        currentProgress = prev + Math.random() * 8
+        
+        // Cap at 95% until actual completion
+        if(currentProgress >= 95){
           clearInterval(interval)
-          // Save to Firebase after 1 second
-          setTimeout(() => {
-            if(formData){
-              saveToFirebase(formData)
-            }
-          }, 1000)
-          return 100
+          return 95
         }
-        return newProgress
+        return currentProgress
       })
-    }, 500)
+    }, 400)
 
     return () => clearInterval(interval)
   }, [formData, navigate])
+
+  // Trigger Firebase upload when progress reaches 95%
+  useEffect(() => {
+    if(progress >= 95 && !uploading && formData){
+      setUploading(true)
+      saveToFirebase(formData)
+    }
+  }, [progress, uploading, formData])
 
   const saveToFirebase = async (data) => {
     const timestamp = Date.now()
     
     console.log('🚀 Starting Firebase upload...')
     
-    // Upload couple photo
-    const couplePhotoValue = data.couplePhotoPreview
-    const couplePhotoRef = ref(storage, `invitations/${timestamp}/couple-photo.jpg`)
-    console.log('📤 Uploading couple photo...')
-    
-    if (!couplePhotoValue.startsWith('data:')) {
-      throw new Error('couple photo is not a valid data URL')
+    try {
+      // Upload couple photo
+      const couplePhotoValue = data.couplePhotoPreview
+      const couplePhotoRef = ref(storage, `invitations/${timestamp}/couple-photo.jpg`)
+      console.log('📤 Uploading couple photo...')
+      
+      if (!couplePhotoValue.startsWith('data:')) {
+        throw new Error('couple photo is not a valid data URL')
+      }
+      
+      await uploadString(couplePhotoRef, couplePhotoValue, 'data_url')
+      const couplePhotoURL = await getDownloadURL(couplePhotoRef)
+      console.log('✅ Couple photo URL:', couplePhotoURL)
+      setProgress(100) // 10% progress for couple photo
+
+      // Upload hero image
+      const heroImageValue = data.heroImagePreview
+      const heroImageRef = ref(storage, `invitations/${timestamp}/hero-image.jpg`)
+      console.log('📤 Uploading hero image...')
+      
+      if (!heroImageValue.startsWith('data:')) {
+        throw new Error('hero image is not a valid data URL')
+      }
+      
+      await uploadString(heroImageRef, heroImageValue, 'data_url')
+      const heroImageURL = await getDownloadURL(heroImageRef)
+      console.log('✅ Hero image URL:', heroImageURL)
+      setProgress(100) // 20% progress for hero image
+
+      // Upload gallery images
+      const galleryURLs = []
+      const progressPerImage = Math.floor(20 / Math.max(data.galleryImages.length, 1))
+      for (let i = 0; i < data.galleryImages.length; i++) {
+        const galleryImageRef = ref(storage, `invitations/${timestamp}/gallery-${i}.jpg`)
+        console.log(`📤 Uploading gallery image ${i + 1}...`)
+        await uploadString(galleryImageRef, data.galleryImages[i].preview, 'data_url')
+        const galleryImageURL = await getDownloadURL(galleryImageRef)
+        galleryURLs.push(galleryImageURL)
+        console.log(`✅ Gallery image ${i + 1} URL:`, galleryImageURL)
+        setProgress(prev => Math.min(100, prev + progressPerImage)) // Increment for each gallery image
+      }
+
+      // Save to Firestore
+      console.log('💾 Saving to Firestore...')
+      const invitationData = {
+        brideName: data.brideName,
+        groomName: data.groomName,
+        headline: data.headline,
+        date: data.date,
+        venue: data.venue,
+        couplePhoto: couplePhotoURL,
+        heroImage: heroImageURL,
+        ceremony: data.ceremony,
+        reception: data.reception,
+        dressCode: data.dressCode,
+        storyCards: data.storyCards.filter(card => card.title),
+        galleryImages: galleryURLs,
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      }
+
+      const docRef = await addDoc(collection(db, 'invitations'), invitationData)
+      const invitationId = docRef.id
+      console.log('✅ Firestore document created:', invitationId)
+      setProgress(100) // Final 100% when complete
+
+      console.log('✅ ALL FIREBASE OPERATIONS SUCCESSFUL!')
+      setTimeout(() => {
+        navigate(`/share/${invitationId}`)
+      }, 300) // Brief delay to show 100% completion
+    } catch (error) {
+      console.error('❌ Firebase upload error:', error)
+      setUploading(false)
+      // Progress bar stays where it is on error; user can retry
     }
-    
-    await uploadString(couplePhotoRef, couplePhotoValue, 'data_url')
-    const couplePhotoURL = await getDownloadURL(couplePhotoRef)
-    console.log('✅ Couple photo URL:', couplePhotoURL)
-
-    // Upload hero image
-    const heroImageValue = data.heroImagePreview
-    const heroImageRef = ref(storage, `invitations/${timestamp}/hero-image.jpg`)
-    console.log('📤 Uploading hero image...')
-    
-    if (!heroImageValue.startsWith('data:')) {
-      throw new Error('hero image is not a valid data URL')
-    }
-    
-    await uploadString(heroImageRef, heroImageValue, 'data_url')
-    const heroImageURL = await getDownloadURL(heroImageRef)
-    console.log('✅ Hero image URL:', heroImageURL)
-
-    // Upload gallery images
-    const galleryURLs = []
-    for (let i = 0; i < data.galleryImages.length; i++) {
-      const galleryImageRef = ref(storage, `invitations/${timestamp}/gallery-${i}.jpg`)
-      console.log(`📤 Uploading gallery image ${i + 1}...`)
-      await uploadString(galleryImageRef, data.galleryImages[i].preview, 'data_url')
-      const galleryImageURL = await getDownloadURL(galleryImageRef)
-      galleryURLs.push(galleryImageURL)
-      console.log(`✅ Gallery image ${i + 1} URL:`, galleryImageURL)
-    }
-
-    // Save to Firestore
-    console.log('💾 Saving to Firestore...')
-    const invitationData = {
-      brideName: data.brideName,
-      groomName: data.groomName,
-      headline: data.headline,
-      date: data.date,
-      venue: data.venue,
-      couplePhoto: couplePhotoURL,
-      heroImage: heroImageURL,
-      ceremony: data.ceremony,
-      reception: data.reception,
-      dressCode: data.dressCode,
-      storyCards: data.storyCards.filter(card => card.title),
-      galleryImages: galleryURLs,
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    }
-
-    const docRef = await addDoc(collection(db, 'invitations'), invitationData)
-    const invitationId = docRef.id
-    console.log('✅ Firestore document created:', invitationId)
-
-    console.log('✅ ALL FIREBASE OPERATIONS SUCCESSFUL!')
-    navigate(`/share/${invitationId}`)
   }
 
   const base64ToBlob = (base64, mimeType) => {

@@ -106,7 +106,7 @@ export default function SharePage(){
           <h2>Unable to load invitation</h2>
           <p>The invitation could not be found. Please check the link or try creating a new invitation.</p>
           <button 
-            className="btn-primary"
+            className="btn-primary btn-generate"
             onClick={() => navigate('/generate')}
             style={{marginTop: '20px'}}
           >

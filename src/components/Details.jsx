@@ -1,9 +1,6 @@
 
-export default function Details({ ceremony, reception, dressCode }){
-  // Show default template if no data provided
-  const showDefaults = !ceremony?.venue && !reception?.venue && !dressCode
-
-  // Check which sections have data
+export default function Details({ ceremony, reception, dressCode, showDefaults = false }){
+  // Check which sections have actual data
   const hasCeremony = ceremony?.venue || showDefaults
   const hasReception = reception?.venue || showDefaults
   const hasDressCode = dressCode || showDefaults

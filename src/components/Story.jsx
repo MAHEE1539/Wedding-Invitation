@@ -1,4 +1,4 @@
-export default function Story({ storyCards }){
+export default function Story({ storyCards, showDefaults = false }){
   const defaultMoments = [
     {
       icon: '☕',
@@ -26,9 +26,15 @@ export default function Story({ storyCards }){
     }
   ]
 
-  const moments = (storyCards && storyCards.length > 0 && storyCards.some(card => card.title)) 
+  const hasStory = storyCards && storyCards.length > 0 && storyCards.some(card => card.title)
+  
+  if(!hasStory && !showDefaults) {
+    return null
+  }
+
+  const moments = hasStory
     ? storyCards.filter(card => card.title)
-    : defaultMoments
+    : (showDefaults ? defaultMoments : [])
 
   return (
     <section id="story" className="story container">

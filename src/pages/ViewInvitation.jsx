@@ -16,6 +16,7 @@ export default function ViewInvitation(){
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [source, setSource] = useState(null)
+  const [copied, setCopied] = useState(false)
 
   // Scroll to top on page load
   useEffect(() => {
@@ -64,6 +65,37 @@ export default function ViewInvitation(){
     
     fetchInvitation()
   }, [id])
+
+  const invitationLink = `${window.location.origin}/invitation/${id}`
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(invitationLink)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleShare = (platform) => {
+    const text = `You are cordially invited to join ${invitation?.brideName} & ${invitation?.groomName} on their special day! 💕`
+    let shareUrl = ''
+
+    switch(platform){
+      case 'whatsapp':
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + invitationLink)}`
+        break
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(invitationLink)}`
+        break
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(invitationLink)}`
+        break
+      default:
+        break
+    }
+
+    if(shareUrl){
+      window.open(shareUrl, '_blank')
+    }
+  }
 
   if(loading){
     return (
@@ -149,6 +181,114 @@ export default function ViewInvitation(){
           date={invitation.date}
           venue={invitation.venue}
         />
+
+        {/* Share Feature Section */}
+        <section className="share-feature-section">
+          <div className="container">
+            <div className="share-feature-card">
+              <h2>Share This Invitation</h2>
+              <p className="feature-subtitle">Spread the joy! Share this beautiful invitation with your loved ones.</p>
+              
+              <div className="share-feature-grid">
+                {/* Direct Link Share */}
+                <div className="share-feature-item">
+                  <div className="feature-icon">🔗</div>
+                  <h3>Copy Link</h3>
+                  <p>Copy the invitation link to share via any platform</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={handleCopyLink}
+                  >
+                    {copied ? '✓ Copied!' : 'Copy Invitation Link'}
+                  </button>
+                </div>
+
+                {/* WhatsApp Share */}
+                <div className="share-feature-item">
+                  <div className="feature-icon">💬</div>
+                  <h3>WhatsApp</h3>
+                  <p>Share directly on WhatsApp with guests</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={() => handleShare('whatsapp')}
+                  >
+                    Share on WhatsApp
+                  </button>
+                </div>
+
+                {/* Facebook Share */}
+                <div className="share-feature-item">
+                  <div className="feature-icon">f</div>
+                  <h3>Facebook</h3>
+                  <p>Post this invitation on Facebook</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={() => handleShare('facebook')}
+                  >
+                    Share on Facebook
+                  </button>
+                </div>
+
+                {/* Twitter Share */}
+                <div className="share-feature-item">
+                  <div className="feature-icon">𝕏</div>
+                  <h3>Twitter</h3>
+                  <p>Share this special moment on Twitter</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={() => handleShare('twitter')}
+                  >
+                    Share on Twitter
+                  </button>
+                </div>
+
+                {/* Email Share */}
+                <div className="share-feature-item">
+                  <div className="feature-icon">📧</div>
+                  <h3>Email</h3>
+                  <p>Share via email with the invitation link</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={() => {
+                      const subject = `You're Invited to ${invitation?.brideName} & ${invitation?.groomName}'s Wedding!`
+                      const body = `You are cordially invited to join ${invitation?.brideName} & ${invitation?.groomName} on their special day!\n\nView the invitation here: ${invitationLink}\n\nLooking forward to celebrating with you! 💕`
+                      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+                    }}
+                  >
+                    Share via Email
+                  </button>
+                </div>
+
+                {/* SMS Share */}
+                <div className="share-feature-item">
+                  <div className="feature-icon">📱</div>
+                  <h3>SMS</h3>
+                  <p>Share via text message with guests</p>
+                  <button 
+                    className="btn-primary"
+                    onClick={() => {
+                      const text = `You're invited to ${invitation?.brideName} & ${invitation?.groomName}'s wedding! ${invitationLink}`
+                      window.location.href = `sms:?body=${encodeURIComponent(text)}`
+                    }}
+                  >
+                    Share via SMS
+                  </button>
+                </div>
+              </div>
+
+              <div className="share-tips">
+                <h3>💡 Sharing Tips</h3>
+                <ul>
+                  <li>Share the link with guests 2-4 weeks before the wedding</li>
+                  <li>Use WhatsApp for quick group sharing with family</li>
+                  <li>Post on social media to announce your special day</li>
+                  <li>Send email invites for formal guest lists</li>
+                  <li>Your invitation link expires after 30 days</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       
       <Footer />

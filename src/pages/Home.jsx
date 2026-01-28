@@ -53,7 +53,7 @@ export default function Home(){
                   View Template
                 </button>
                 <button 
-                  className="btn-secondary btn-lg"
+                  className="btn-primary btn-lg btn-generate"
                   onClick={() => navigate('/generate')}
                 >
                   Generate Your Invitation

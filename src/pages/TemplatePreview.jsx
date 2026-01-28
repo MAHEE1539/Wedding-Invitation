@@ -29,7 +29,7 @@ export default function TemplatePreview(){
             <h2>Template Preview</h2>
             <p>See how your invitation will look. Ready to create yours?</p>
             <button 
-              className="btn-primary"
+              className="btn-primary btn-generate"
               onClick={() => navigate('/generate')}
             >
               Generate Your Invitation
@@ -38,15 +38,15 @@ export default function TemplatePreview(){
         </div>
 
         <Hero />
-        <Details />
-        <Story />
-        <Gallery />
+        <Details showDefaults={true} />
+        <Story showDefaults={true} />
+        <Gallery showDefaults={true} />
         <RSVP />
         <Map />
         <Notify />
 
         <div className="container" style={{textAlign: 'center', marginTop: '40px', paddingBottom: '40px'}}>
-          <button className="btn-primary" onClick={() => navigate('/generate')}>Generate Your Invitation</button>
+          <button className="btn-primary btn-generate" onClick={() => navigate('/generate')}>Generate Your Invitation</button>
         </div>
       </main>
       

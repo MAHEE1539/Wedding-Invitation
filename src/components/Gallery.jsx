@@ -4,10 +4,16 @@ const defaultImages = [
   '/assets/gallery-4.jpg','/assets/gallery-5.jpg','/assets/gallery-6.jpg'
 ]
 
-export default function Gallery({ images }){
-  const displayImages = (images && images.length > 0) 
+export default function Gallery({ images, showDefaults = false }){
+  const hasImages = images && images.length > 0
+
+  if(!hasImages && !showDefaults) {
+    return null
+  }
+
+  const displayImages = hasImages 
     ? images.map(img => typeof img === 'string' ? img : img.preview)
-    : defaultImages
+    : (showDefaults ? defaultImages : [])
 
   return (
     <section id="gallery" className="gallery container">

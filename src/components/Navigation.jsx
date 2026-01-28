@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import goldenLogo from '../assets/golden.png'
 
 export default function Navigation({ hideContactUs = false, onContactClick = null }){
   const [open, setOpen] = useState(false)
@@ -21,7 +22,7 @@ export default function Navigation({ hideContactUs = false, onContactClick = nul
           style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px'}}
           onClick={() => navigate('/')}
         >
-          <img src="src/assets/golden.png" alt="Klippers" className="logo-img"  />
+          <img src={goldenLogo} alt="Klippers" className="logo-img"  />
           <span>KLIPPERS</span>
         </div>
 
