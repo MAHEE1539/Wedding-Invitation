@@ -1,6 +1,6 @@
-export default function Map(){
-  const query = encodeURIComponent('The Grand Palace, Mumbai')
-  const src = `https://www.google.com/maps?q=${query}&output=embed`
+export default function Map({ query, address }){
+  const locationQuery = encodeURIComponent(query || 'The Grand Palace, Mumbai')
+  const src = `https://www.google.com/maps?q=${locationQuery}&output=embed`
 
   return (
     <section className="map container" aria-label="Event location">
@@ -16,7 +16,7 @@ export default function Map(){
           referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
       </div>
-      <p className="map-note">Address: The Grand Palace, Mumbai</p>
+      <p className="map-note">Address: {address || query || 'The Grand Palace, Mumbai'}</p>
     </section>
   )
 }

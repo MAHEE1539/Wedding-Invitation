@@ -114,6 +114,7 @@ export default function GenerationProgress(){
         headline: data.headline,
         date: data.date,
         venue: data.venue,
+        location: data.location || '',
         couplePhoto: couplePhotoURL,
         heroImage: heroImageURL,
         ceremony: data.ceremony,

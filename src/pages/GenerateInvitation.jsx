@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navigation from '../components/Navigation'
+import Map from '../components/Map'
 import { InvitationContext } from '../context/InvitationContext'
 import './pages.css'
 
@@ -20,6 +21,7 @@ export default function GenerateInvitation(){
     groomName: '',
     date: '',
     venue: '',
+    location: '',
     headline: 'We cordially invite you to join us',
     couplePhoto: null,
     heroImage: null,
@@ -207,6 +209,18 @@ export default function GenerateInvitation(){
                   </div>
                 </div>
 
+                  <div className="form-group">
+                    <label htmlFor="location">Location (Address for map)</label>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleInputChange}
+                      placeholder="Enter address or place for map preview"
+                    />
+                  </div>
+
                 {/* Headline */}
                 <div className="form-group">
                   <label htmlFor="headline">Invitation Headline</label>
@@ -329,6 +343,13 @@ export default function GenerateInvitation(){
                     />
                   </div>
                 </div>
+
+                {/* Map Preview (uses location if provided else venue) */}
+                {(formData.location || formData.venue) && (
+                  <div style={{marginTop: '20px'}}>
+                    <Map query={formData.location || formData.venue} address={formData.location || formData.venue} />
+                  </div>
+                )}
 
                 {/* Story Cards Section */}
                 <div style={{marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee'}}>

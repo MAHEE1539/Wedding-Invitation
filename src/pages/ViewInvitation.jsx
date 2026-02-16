@@ -2,6 +2,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import Details from '../components/Details'
+import Map from '../components/Map'
 import Footer from '../components/Footer'
 import Gallery from '../components/Gallery'
 import Navigation from '../components/Navigation'
@@ -43,6 +44,7 @@ export default function ViewInvitation(){
             venue: firebaseData.venue,
             couplePhotoPreview: firebaseData.couplePhoto,
             heroImagePreview: firebaseData.heroImage,
+            location: firebaseData.location || '',
             ceremony: firebaseData.ceremony || {},
             reception: firebaseData.reception || {},
             dressCode: firebaseData.dressCode || '',
@@ -163,6 +165,9 @@ export default function ViewInvitation(){
               <p className="headline">{invitation.headline}</p>
               <p className="date">{invitation.date}</p>
               <p className="venue">{invitation.venue}</p>
+              {(invitation.location || invitation.venue) && (
+                <p className="location">{invitation.location || invitation.venue}</p>
+              )}
             </div>
           </div>
         </section>
@@ -173,6 +178,11 @@ export default function ViewInvitation(){
           reception={invitation.reception}
           dressCode={invitation.dressCode}
         />
+        {(invitation.location || invitation.venue) && (
+          <div style={{marginTop: '20px'}}>
+            <Map query={invitation.location || invitation.venue} address={invitation.location || invitation.venue} />
+          </div>
+        )}
         <Story storyCards={invitation.storyCards} />
         <Gallery images={invitation.galleryImages} />
         <Notify 

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ConfirmationModal from '../components/ConfirmationModal'
+import Map from '../components/Map'
 import { InvitationContext } from '../context/InvitationContext'
 import './pages.css'
 
@@ -112,6 +113,9 @@ export default function ReviewInvitation(){
                   <p className="headline">{formData.headline}</p>
                   <p className="date">{formattedDate} • {formattedTime}</p>
                   <p className="venue">{formData.venue}</p>
+                  {(formData.location || formData.venue) && (
+                    <p className="location">{formData.location || formData.venue}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -143,6 +147,13 @@ export default function ReviewInvitation(){
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Map Preview if location provided */}
+          {(formData.location || formData.venue) && (
+            <div style={{marginTop: '24px'}}>
+              <Map query={formData.location || formData.venue} address={formData.location || formData.venue} />
             </div>
           )}
 
