@@ -1,12 +1,12 @@
 
-export default function Details({ ceremony, reception, dressCode, showDefaults = false }){
+export default function Details({ ceremony, reception, dressCode, showDefaults = false }) {
   // Check which sections have actual data
   const hasCeremony = ceremony?.venue || showDefaults
   const hasReception = reception?.venue || showDefaults
   const hasDressCode = dressCode || showDefaults
 
   // If no data at all, don't show the section
-  if(!hasCeremony && !hasReception && !hasDressCode) {
+  if (!hasCeremony && !hasReception && !hasDressCode) {
     return null
   }
 
@@ -26,6 +26,7 @@ export default function Details({ ceremony, reception, dressCode, showDefaults =
             ) : showDefaults ? (
               <>
                 <p>Venue: The Grand Palace</p>
+                <p>Date: June 14, 2026</p>
                 <p>Time: 5:00 PM</p>
               </>
             ) : null}
@@ -43,6 +44,7 @@ export default function Details({ ceremony, reception, dressCode, showDefaults =
             ) : showDefaults ? (
               <>
                 <p>Venue: Rose Garden Banquet</p>
+                <p>Date: June 15, 2026</p>
                 <p>Time: 8:00 PM</p>
               </>
             ) : null}

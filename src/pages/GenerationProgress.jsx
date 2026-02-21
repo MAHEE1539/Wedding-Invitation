@@ -6,7 +6,7 @@ import { InvitationContext } from '../context/InvitationContext'
 import { db, storage } from '../utils/firebase'
 import './pages.css'
 
-export default function GenerationProgress(){
+export default function GenerationProgress() {
   const navigate = useNavigate()
   const { formData: contextFormData } = useContext(InvitationContext)
   const [progress, setProgress] = useState(0)
@@ -19,12 +19,12 @@ export default function GenerationProgress(){
   }, [])
 
   useEffect(() => {
-    if(contextFormData){
+    if (contextFormData) {
       setFormData(contextFormData)
     } else {
       // Fallback to sessionStorage for legacy support
       const stored = sessionStorage.getItem('invitationDataForGeneration')
-      if(stored){
+      if (stored) {
         setFormData(JSON.parse(stored))
       }
     }
@@ -33,14 +33,14 @@ export default function GenerationProgress(){
   useEffect(() => {
     // Simulate generation progress - slower to match actual Firebase operations
     let currentProgress = 0
-    
+
     const interval = setInterval(() => {
       setProgress(prev => {
         // Slower progress increase that syncs better with actual uploads
         currentProgress = prev + Math.random() * 8
-        
+
         // Cap at 95% until actual completion
-        if(currentProgress >= 95){
+        if (currentProgress >= 95) {
           clearInterval(interval)
           return 95
         }
@@ -53,7 +53,7 @@ export default function GenerationProgress(){
 
   // Trigger Firebase upload when progress reaches 95%
   useEffect(() => {
-    if(progress >= 95 && !uploading && formData){
+    if (progress >= 95 && !uploading && formData) {
       setUploading(true)
       saveToFirebase(formData)
     }
@@ -61,19 +61,19 @@ export default function GenerationProgress(){
 
   const saveToFirebase = async (data) => {
     const timestamp = Date.now()
-    
+
     console.log('🚀 Starting Firebase upload...')
-    
+
     try {
       // Upload couple photo
       const couplePhotoValue = data.couplePhotoPreview
       const couplePhotoRef = ref(storage, `invitations/${timestamp}/couple-photo.jpg`)
       console.log('📤 Uploading couple photo...')
-      
+
       if (!couplePhotoValue.startsWith('data:')) {
         throw new Error('couple photo is not a valid data URL')
       }
-      
+
       await uploadString(couplePhotoRef, couplePhotoValue, 'data_url')
       const couplePhotoURL = await getDownloadURL(couplePhotoRef)
       console.log('✅ Couple photo URL:', couplePhotoURL)
@@ -83,11 +83,11 @@ export default function GenerationProgress(){
       const heroImageValue = data.heroImagePreview
       const heroImageRef = ref(storage, `invitations/${timestamp}/hero-image.jpg`)
       console.log('📤 Uploading hero image...')
-      
+
       if (!heroImageValue.startsWith('data:')) {
         throw new Error('hero image is not a valid data URL')
       }
-      
+
       await uploadString(heroImageRef, heroImageValue, 'data_url')
       const heroImageURL = await getDownloadURL(heroImageRef)
       console.log('✅ Hero image URL:', heroImageURL)
@@ -113,6 +113,7 @@ export default function GenerationProgress(){
         groomName: data.groomName,
         headline: data.headline,
         date: data.date,
+        time: data.time || '',
         venue: data.venue,
         location: data.location || '',
         couplePhoto: couplePhotoURL,
@@ -158,12 +159,12 @@ export default function GenerationProgress(){
         <div className="generation-content">
           <h2>Creating Your Invitation...</h2>
           <p>Please wait while we generate your beautiful invitation</p>
-          
+
           <div className="progress-container">
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{width: `${progress}%`}}
+              <div
+                className="progress-fill"
+                style={{ width: `${progress}%` }}
               />
             </div>
             <span className="progress-text">{Math.round(progress)}%</span>

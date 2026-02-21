@@ -5,21 +5,22 @@ import Navigation from '../components/Navigation'
 import { InvitationContext } from '../context/InvitationContext'
 import './pages.css'
 
-export default function GenerateInvitation(){
+export default function GenerateInvitation() {
   const navigate = useNavigate()
   const { setFormData: setContextFormData } = useContext(InvitationContext)
   const fileInputRef = useRef(null)
   const heroImageRef = useRef(null)
-  
+
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
-  
+
   const [formData, setFormData] = useState({
     brideName: '',
     groomName: '',
     date: '',
+    time: '',
     venue: '',
     location: '',
     headline: 'We cordially invite you to join us',
@@ -85,7 +86,7 @@ export default function GenerateInvitation(){
 
   const handleCouplePhotoChange = (e) => {
     const file = e.target.files[0]
-    if(file){
+    if (file) {
       const reader = new FileReader()
       reader.onload = (event) => {
         setFormData(prev => ({
@@ -100,7 +101,7 @@ export default function GenerateInvitation(){
 
   const handleHeroImageChange = (e) => {
     const file = e.target.files[0]
-    if(file){
+    if (file) {
       const reader = new FileReader()
       reader.onload = (event) => {
         setFormData(prev => ({
@@ -135,7 +136,7 @@ export default function GenerateInvitation(){
   }
 
   const handleReview = () => {
-    if(!formData.brideName.trim() || !formData.groomName.trim() || !formData.date || !formData.venue.trim()){
+    if (!formData.brideName.trim() || !formData.groomName.trim() || !formData.date || !formData.time || !formData.venue.trim()) {
       alert('Please fill in all required fields')
       return
     }
@@ -147,7 +148,7 @@ export default function GenerateInvitation(){
   return (
     <div className="page-wrapper">
       <Navigation />
-      
+
       <main className="main-content">
         <section className="generate-section">
           <div className="container">
@@ -188,10 +189,22 @@ export default function GenerateInvitation(){
                   <div className="form-group">
                     <label htmlFor="date">Wedding Date *</label>
                     <input
-                      type="datetime-local"
+                      type="date"
                       id="date"
                       name="date"
                       value={formData.date}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="time">Wedding Time *</label>
+                    <input
+                      type="time"
+                      id="time"
+                      name="time"
+                      value={formData.time}
                       onChange={handleInputChange}
                       required
                     />
@@ -211,17 +224,17 @@ export default function GenerateInvitation(){
                   </div>
                 </div>
 
-                  <div className="form-group">
-                    <label htmlFor="location">Location (Address for map)</label>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      placeholder="Enter address or place for map preview"
-                    />
-                  </div>
+                <div className="form-group">
+                  <label htmlFor="location">Location (Address for map)</label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    placeholder="Enter address or place for map preview"
+                  />
+                </div>
 
                 {/* Headline */}
                 <div className="form-group">
@@ -255,7 +268,7 @@ export default function GenerateInvitation(){
                       type="file"
                       accept="image/*"
                       onChange={handleCouplePhotoChange}
-                      style={{display: 'none'}}
+                      style={{ display: 'none' }}
                     />
                   </div>
                 </div>
@@ -278,30 +291,30 @@ export default function GenerateInvitation(){
                       type="file"
                       accept="image/*"
                       onChange={handleHeroImageChange}
-                      style={{display: 'none'}}
+                      style={{ display: 'none' }}
                     />
                   </div>
                 </div>
 
                 {/* Wedding Details Section */}
-                <div style={{marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee'}}>
-                  <h3 style={{marginBottom: '20px'}}>Wedding Details (Optional)</h3>
-                  
+                <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee' }}>
+                  <h3 style={{ marginBottom: '20px' }}>Wedding Details (Optional)</h3>
+
                   {/* Ceremony */}
                   <div className="form-group">
                     <label>Ceremony</label>
+                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                      <input
+                        type="text"
+                        placeholder="Venue"
+                        value={formData.ceremony.venue}
+                        onChange={(e) => handleNestedInputChange('ceremony', 'venue', e.target.value)}
+                      />
+                    </div>
                     <div className="form-row">
                       <div className="form-group">
                         <input
-                          type="text"
-                          placeholder="Venue"
-                          value={formData.ceremony.venue}
-                          onChange={(e) => handleNestedInputChange('ceremony', 'venue', e.target.value)}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="datetime-local"
+                          type="date"
                           placeholder="Date"
                           value={formData.ceremony.date}
                           onChange={(e) => handleNestedInputChange('ceremony', 'date', e.target.value)}
@@ -321,18 +334,18 @@ export default function GenerateInvitation(){
                   {/* Reception */}
                   <div className="form-group">
                     <label>Reception</label>
+                    <div className="form-group" style={{ marginBottom: '15px' }}>
+                      <input
+                        type="text"
+                        placeholder="Venue"
+                        value={formData.reception.venue}
+                        onChange={(e) => handleNestedInputChange('reception', 'venue', e.target.value)}
+                      />
+                    </div>
                     <div className="form-row">
                       <div className="form-group">
                         <input
-                          type="text"
-                          placeholder="Venue"
-                          value={formData.reception.venue}
-                          onChange={(e) => handleNestedInputChange('reception', 'venue', e.target.value)}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <input
-                          type="datetime-local"
+                          type="date"
                           placeholder="Date"
                           value={formData.reception.date}
                           onChange={(e) => handleNestedInputChange('reception', 'date', e.target.value)}
@@ -364,16 +377,16 @@ export default function GenerateInvitation(){
 
                 {/* Map Preview (uses location if provided else venue) */}
                 {(formData.location || formData.venue) && (
-                  <div style={{marginTop: '20px'}}>
+                  <div style={{ marginTop: '20px' }}>
                     <Map query={formData.location || formData.venue} address={formData.location || formData.venue} />
                   </div>
                 )}
 
                 {/* Story Cards Section */}
-                <div style={{marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee'}}>
-                  <h3 style={{marginBottom: '20px'}}>Our Story (Optional)</h3>
+                <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee' }}>
+                  <h3 style={{ marginBottom: '20px' }}>Our Story (Optional)</h3>
                   {formData.storyCards.map((card, idx) => (
-                    <div key={idx} style={{marginBottom: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px'}}>
+                    <div key={idx} style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
                       <div className="form-row">
                         <div className="form-group">
                           <input
@@ -406,7 +419,7 @@ export default function GenerateInvitation(){
                           placeholder="Story description"
                           value={card.description}
                           onChange={(e) => handleStoryCardChange(idx, 'description', e.target.value)}
-                          style={{minHeight: '80px'}}
+                          style={{ minHeight: '80px' }}
                         />
                       </div>
                       {formData.storyCards.length > 1 && (
@@ -414,7 +427,7 @@ export default function GenerateInvitation(){
                           type="button"
                           className="btn-danger"
                           onClick={() => removeStoryCard(idx)}
-                          style={{marginTop: '10px'}}
+                          style={{ marginTop: '10px' }}
                         >
                           Remove Story
                         </button>
@@ -425,33 +438,33 @@ export default function GenerateInvitation(){
                     type="button"
                     className="btn-secondary"
                     onClick={addStoryCard}
-                    style={{marginTop: '10px'}}
+                    style={{ marginTop: '10px' }}
                   >
                     + Add Story Card
                   </button>
                 </div>
 
                 {/* Gallery Section */}
-                <div style={{marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee'}}>
-                  <h3 style={{marginBottom: '20px'}}>Gallery Images (Optional)</h3>
+                <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #eee' }}>
+                  <h3 style={{ marginBottom: '20px' }}>Gallery Images (Optional)</h3>
                   <div className="gallery-upload">
                     <input
                       type="file"
                       multiple
                       accept="image/*"
                       onChange={handleGalleryImageAdd}
-                      style={{marginBottom: '15px'}}
+                      style={{ marginBottom: '15px' }}
                     />
                   </div>
-                  <div className="gallery-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px', marginTop: '15px'}}>
+                  <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '10px', marginTop: '15px' }}>
                     {formData.galleryImages.map((img, idx) => (
-                      <div key={idx} style={{position: 'relative', borderRadius: '8px', overflow: 'hidden'}}>
-                        <img src={img.preview} alt={`Gallery ${idx}`} style={{width: '100%', height: '120px', objectFit: 'cover'}} />
+                      <div key={idx} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden' }}>
+                        <img src={img.preview} alt={`Gallery ${idx}`} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
                         <button
                           type="button"
                           className="btn-danger"
                           onClick={() => removeGalleryImage(idx)}
-                          style={{position: 'absolute', top: '5px', right: '5px', padding: '3px 6px', fontSize: '12px'}}
+                          style={{ position: 'absolute', top: '5px', right: '5px', padding: '3px 6px', fontSize: '12px' }}
                         >
                           ✕
                         </button>

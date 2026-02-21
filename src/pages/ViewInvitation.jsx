@@ -163,7 +163,11 @@ export default function ViewInvitation() {
             <div className="hero-text">
               <h1 className="names">{invitation.brideName} & {invitation.groomName}</h1>
               <p className="headline">{invitation.headline}</p>
-              <p className="date">{invitation.date}</p>
+              <div style={{ margin: '15px 0' }}>
+                <p className="date" style={{ display: 'inline' }}>{invitation.date}</p>
+                <span style={{ margin: '0 10px' }}>•</span>
+                <p className="time" style={{ display: 'inline' }}>{invitation.time}</p>
+              </div>
               <p className="venue">{invitation.venue}</p>
               {(invitation.location || invitation.venue) && (
                 <p className="location">{invitation.location || invitation.venue}</p>
