@@ -20,6 +20,7 @@ export default function Details({ ceremony, reception, dressCode, showDefaults =
             {ceremony?.venue ? (
               <>
                 <p>Venue: {ceremony.venue}</p>
+                {ceremony.date && <p>Date: {ceremony.date}</p>}
                 {ceremony.time && <p>Time: {ceremony.time}</p>}
               </>
             ) : showDefaults ? (
@@ -36,6 +37,7 @@ export default function Details({ ceremony, reception, dressCode, showDefaults =
             {reception?.venue ? (
               <>
                 <p>Venue: {reception.venue}</p>
+                {reception.date && <p>Date: {reception.date}</p>}
                 {reception.time && <p>Time: {reception.time}</p>}
               </>
             ) : showDefaults ? (

@@ -130,6 +130,7 @@ export default function ReviewInvitation(){
                   <div className="card">
                     <h4>Ceremony</h4>
                     <p><strong>Venue:</strong> {formData.ceremony.venue}</p>
+                    {formData.ceremony.date && <p><strong>Date:</strong> {formData.ceremony.date}</p>}
                     {formData.ceremony.time && <p><strong>Time:</strong> {formData.ceremony.time}</p>}
                   </div>
                 )}
@@ -137,6 +138,7 @@ export default function ReviewInvitation(){
                   <div className="card">
                     <h4>Reception</h4>
                     <p><strong>Venue:</strong> {formData.reception.venue}</p>
+                    {formData.reception.date && <p><strong>Date:</strong> {formData.reception.date}</p>}
                     {formData.reception.time && <p><strong>Time:</strong> {formData.reception.time}</p>}
                   </div>
                 )}

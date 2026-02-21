@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Navigation from '../components/Navigation'
 import Map from '../components/Map'
+import Navigation from '../components/Navigation'
 import { InvitationContext } from '../context/InvitationContext'
 import './pages.css'
 
@@ -29,10 +29,12 @@ export default function GenerateInvitation(){
     heroImagePreview: '/assets/hero.jpg',
     ceremony: {
       venue: '',
+      date: '',
       time: ''
     },
     reception: {
       venue: '',
+      date: '',
       time: ''
     },
     dressCode: '',
@@ -299,6 +301,14 @@ export default function GenerateInvitation(){
                       </div>
                       <div className="form-group">
                         <input
+                          type="datetime-local"
+                          placeholder="Date"
+                          value={formData.ceremony.date}
+                          onChange={(e) => handleNestedInputChange('ceremony', 'date', e.target.value)}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
                           type="time"
                           placeholder="Time"
                           value={formData.ceremony.time}
@@ -318,6 +328,14 @@ export default function GenerateInvitation(){
                           placeholder="Venue"
                           value={formData.reception.venue}
                           onChange={(e) => handleNestedInputChange('reception', 'venue', e.target.value)}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <input
+                          type="datetime-local"
+                          placeholder="Date"
+                          value={formData.reception.date}
+                          onChange={(e) => handleNestedInputChange('reception', 'date', e.target.value)}
                         />
                       </div>
                       <div className="form-group">
